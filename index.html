@@ -211,7 +211,7 @@
 
         <div class="content has-text-justified" style="margin-bottom: 20px;">
           <p>
-            We propose two complementary techniques. Multi-turn RLVR adapts the model online by fine-tuning on level-completing trajectories, addressing the challenge of novel game mechanics. Level-synchronized parallel sampling runs multiple agents simultaneously and shares progress whenever any agent completes a level, countering the sparsity of learning signals.
+            We propose two complementary techniques. Multi-turn RLVR adapts the model online by fine-tuning on level-completing trajectories, addressing the challenge of novel game mechanics. For sparse rewards, completing a level requires many sequential correct actions, so any single agent rarely succeeds. Running many agents in parallel dramatically increases the chance that at least one completes the level, and we share that progress across all agents: whenever any agent finishes a level, every other agent synchronizes to that state. This draws on the principle of pass@k, where multiple independent attempts yield a much higher success rate than any single try, extended from single-step generation to multi-step interactive tasks.
           </p>
         </div>
 
@@ -222,13 +222,13 @@
         <h3 class="title is-4" style="margin-top: 30px;">Level-Synchronized Parallel Sampling</h3>
         <div class="content has-text-justified">
           <p>
-            The sparse reward structure of ARC-AGI-3 makes any single trajectory unlikely to complete a level, since success demands a long sequence of correct actions with no intermediate positive feedback. Running k parallel trajectories substantially increases the chance that at least one succeeds.
+            Completing a level requires many sequential correct actions, so any single agent rarely succeeds. Running many agents in parallel dramatically increases the chance that at least one completes the level. This draws on the principle of pass@k: just as generating k independent code samples increases the probability that at least one is correct, deploying k agents in parallel increases the probability that at least one discovers a level-completing trajectory.
           </p>
           <p>
             We instantiate k=128 parallel agent instances, each operating in its own environment initialized at the first level. Each agent independently attempts to complete the current level through its own sequence of actions. When any agent completes the current level, all other agents discard their partial progress and advance to the level-completing state. From this synchronized state, all k agents resume independent exploration on the next level. This process repeats until all levels are completed or exploration terminates.
           </p>
           <p>
-            Once any agent completes the current level, that progress is shared across all agents rather than being lost. The k agents collectively need to find only one solution per level instead of each agent independently solving all levels from scratch.
+            The k agents collectively need to find only one solution per level instead of each agent independently solving all levels from scratch. Progress is shared rather than lost.
           </p>
         </div>
 
