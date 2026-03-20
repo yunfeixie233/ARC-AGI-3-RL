@@ -47,19 +47,15 @@
             <span class="author-block"><sup>2</sup>NVIDIA</span>
           </div>
 
-          <div class="is-size-6 publication-authors" style="margin-top: 5px;">
-            <span class="author-block"><b>ICLR 2026</b></span>
-          </div>
-
           <div class="column has-text-centered">
             <div class="publication-links">
               <span class="link-block">
-                <a href="#"
+                <a href="./paper.pdf"
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
-                      <i class="ai ai-arxiv"></i>
+                      <i class="fas fa-file-pdf"></i>
                   </span>
-                  <span>arXiv</span>
+                  <span>Paper</span>
                 </a>
               </span>
               <span class="link-block">
@@ -111,7 +107,7 @@
 
         <div class="content has-text-justified" style="margin-bottom: 25px;">
           <p>
-            ARC-AGI-3 is an interactive reasoning benchmark that measures how quickly AI systems acquire novel skills through game play. Each game features unique mechanics that must be discovered through trial-and-error exploration, with no instructions provided. The agent observes a 64&times;64 RGB frame and must figure out what to do on its own. The official metric is <b>action efficiency</b>: an agent that learns faster wastes fewer actions, so the number of actions spent to complete a level directly reflects how quickly it acquires knowledge of the game.
+            ARC-AGI-3 is an interactive reasoning benchmark that measures how quickly AI systems acquire novel skills through game play. Each game features unique mechanics that must be discovered through trial-and-error exploration, with no instructions provided. The agent observes a 64&times;64 RGB frame and must figure out what to do on its own. The official metric is <b>action efficiency</b>: an agent that learns faster tends to waste fewer actions, so the number of actions spent to complete a level serves as a proxy for how quickly it acquires knowledge of the game.
           </p>
         </div>
 
@@ -185,7 +181,7 @@
           </p>
           <ul>
             <li><b>Fundamentally novel mechanics.</b> Each ARC-AGI-3 game is built on distinct mechanics designed to be fundamentally different from one another, and no instructions or goals are provided to the agent. The games rely only on core knowledge priors rather than specialized domain expertise, requiring the agent to adapt to unfamiliar environments through exploration alone. These mechanics lie outside pretrained knowledge, so models cannot rely on memorized patterns.</li>
-            <li><b>Extremely sparse learning signals.</b> The only feedback ARC-AGI-3 provides is level completion itself, and most action sequences do not achieve it. Most individual actions either produce no useful feedback or trigger immediate failure such as a level reset. Since each level typically requires tens of sequential correct actions, successful trajectories are exceedingly rare. This sparsity makes it particularly difficult to apply RLVR, because the model almost never receives a positive reward to learn from.</li>
+            <li><b>Extremely sparse learning signals.</b> The only feedback ARC-AGI-3 provides is level completion itself, and most action sequences do not achieve it. Most individual actions either produce no useful feedback or trigger immediate failure such as a level reset. Since each level typically requires tens of sequential correct actions, successful trajectories are exceedingly rare. This sparsity makes it very difficult to leverage feedback for learning, because the model almost never receives a positive signal to improve from.</li>
           </ul>
           <p>
             Extreme novelty and sparse rewards combine to make ARC-AGI-3 exceptionally hard, exposing core difficulties in interactive reasoning over long-horizon tasks.
@@ -206,7 +202,7 @@
 
         <div class="content has-text-justified" style="margin-bottom: 20px;">
           <p>
-            We propose two complementary techniques that address each source of difficulty. Multi-turn RLVR handles novel game mechanics by adapting the model online through fine-tuning on level-completing trajectories. Level-synchronized parallel sampling counters the sparsity of learning signals by running multiple agents simultaneously and sharing progress whenever any agent completes a level.
+            We propose two complementary techniques. Multi-turn RLVR adapts the model online by fine-tuning on level-completing trajectories, addressing the challenge of novel game mechanics. Level-synchronized parallel sampling runs multiple agents simultaneously and shares progress whenever any agent completes a level, countering the sparsity of learning signals.
           </p>
         </div>
 
@@ -217,33 +213,33 @@
         <h3 class="title is-4" style="margin-top: 30px;">Level-Synchronized Parallel Sampling</h3>
         <div class="content has-text-justified">
           <p>
-            The sparse reward structure of ARC-AGI-3 makes any single trajectory unlikely to complete a level, since success demands a long sequence of correct actions with no intermediate positive feedback. A single trajectory has very low probability of completing a level, but running k parallel trajectories substantially increases the chance that at least one succeeds.
+            The sparse reward structure of ARC-AGI-3 makes any single trajectory unlikely to complete a level, since success demands a long sequence of correct actions with no intermediate positive feedback. Running k parallel trajectories substantially increases the chance that at least one succeeds.
           </p>
           <p>
             We instantiate k=128 parallel agent instances, each operating in its own environment initialized at the first level. Each agent independently attempts to complete the current level through its own sequence of actions. When any agent completes the current level, all other agents discard their partial progress and advance to the level-completing state. From this synchronized state, all k agents resume independent exploration on the next level. This process repeats until all levels are completed or exploration terminates.
           </p>
           <p>
-            This synchronization mechanism directly addresses the sparse reward problem. Once any agent completes the current level, that progress is shared across all agents rather than being lost, so the k agents collectively need to find only one solution per level instead of each agent independently solving all levels from scratch.
+            Once any agent completes the current level, that progress is shared across all agents rather than being lost. The k agents collectively need to find only one solution per level instead of each agent independently solving all levels from scratch.
           </p>
         </div>
 
         <h3 class="title is-4">Online Multi-Turn RLVR with Trajectory Chunking</h3>
         <div class="content has-text-justified">
           <p>
-            We apply multi-turn Reinforcement Learning with Verifiable Rewards to improve action selection. The model adapts its policy by learning from its own interactions with the game. Unlike offline RL pipelines that train on a fixed dataset before deployment, our online approach interleaves policy updates with environment interaction.
+            We apply multi-turn Reinforcement Learning with Verifiable Rewards (RLVR) to improve action selection. The model adapts its policy by learning from its own interactions with the game. Unlike offline RL pipelines that train on a fixed dataset before deployment, our online approach interleaves policy updates with environment interaction.
           </p>
           <p>
-            Many levels in ARC-AGI-3 require dozens of attempts to complete, with individual episodes spanning 100 or more steps. Running until level completion in a single training step is problematic: the agent may execute a long sequence of actions without receiving any positive feedback, and even when the level is eventually completed, attributing a single reward across an excessively long action sequence makes credit assignment difficult.
+            Many levels in ARC-AGI-3 require dozens of attempts to complete, with individual episodes spanning 100 or more steps. Running until level completion in a single training step is problematic. The agent may execute a long sequence of actions without receiving any positive feedback, and even when the level is eventually completed, attributing a single reward across an excessively long action sequence makes credit assignment difficult.
           </p>
           <p>
-            To address this, we introduce trajectory chunking: rather than running until level completion before assigning a reward, we divide each trajectory into segments of at most C=5 actions and evaluate whether the level was completed after each segment. Each segment receives a binary reward, +1.0 if the level was completed and 0.0 otherwise. This bounds the length of each training trajectory, ensuring that when a positive reward is obtained, it can be meaningfully attributed to the actions within that segment. We then update the policy using GRPO with KL-regularized updates to prevent catastrophic forgetting while adapting to new mechanics.
+            To address this, we introduce trajectory chunking. Rather than running until level completion before assigning a reward, we divide each trajectory into segments of at most C=5 actions and evaluate whether the level was completed after each segment. Each segment receives a binary reward: +1.0 if the level was completed, and 0.0 otherwise. This bounds the length of each training trajectory, ensuring that when a positive reward is obtained, it can be meaningfully attributed to the actions within that segment. We then update the policy using GRPO with KL-regularized updates to prevent catastrophic forgetting while adapting to new mechanics.
           </p>
         </div>
 
         <h3 class="title is-4">How They Work Together</h3>
         <div class="content has-text-justified">
           <p>
-            At each round, k parallel agents interact with the environment in chunks of C actions, with level synchronization sharing progress whenever any agent completes a level. The resulting trajectory segments, each annotated with a reward indicating whether level completion occurred, are used to update the policy via RLVR. The improved policy is then deployed for the next round of parallel sampling, improving the agent's action selection over successive rounds.
+            At each round, k parallel agents interact with the environment in chunks of C actions, with level synchronization sharing progress whenever any agent completes a level. The resulting trajectory segments, each annotated with a completion reward, are used to update the policy via RLVR. The improved policy is then deployed for the next round of parallel sampling, improving the agent's action selection over successive rounds.
           </p>
         </div>
       </div>
@@ -470,14 +466,31 @@
 </section>
 
 
-<!-- ===== Citation ===== -->
+<!-- ===== Acknowledgments ===== -->
 <section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Acknowledgments</h2>
+        <div class="content has-text-justified">
+          <p>
+            We would like to extend special thanks to Greg Kamradt and the ARC Team for their help. We also gratefully acknowledge Lambda for providing a research grant that supported the computational resources used in this work.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Citation ===== -->
+<section class="section" style="background-color: #f5f5f5;">
   <div class="container is-max-desktop">
     <div class="columns is-centered">
       <div class="column is-full-width">
         <h2 class="title is-3">Citation</h2>
         <div class="content">
-          <pre style="background-color: #f5f5f5; padding: 15px; border-radius: 6px; font-size: 0.85em; overflow-x: auto;">@inproceedings{xie2026adapting,
+          <pre style="background-color: white; padding: 15px; border-radius: 6px; font-size: 0.85em; overflow-x: auto;">@inproceedings{xie2026adapting,
   title={Adapting LLM Agents to Interactive Reasoning through Parallel Exploration},
   author={Xie, Yunfei and Lan, Shiyi and Wei, Chen},
   booktitle={International Conference on Learning Representations (ICLR)},
