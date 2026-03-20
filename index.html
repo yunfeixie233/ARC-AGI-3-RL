@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Adapting LLM Agents to Interactive Reasoning through Parallel Exploration">
+  <meta name="keywords" content="ARC-AGI, LLM, Interactive Reasoning, Reinforcement Learning, Parallel Sampling, RLVR">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Adapting LLM Agents to Interactive Reasoning through Parallel Exploration</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<!-- ===== Hero: Title & Authors ===== -->
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Adapting LLM Agents to Interactive Reasoning through Parallel Exploration</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://yunfeixie233.github.io/">Yunfei Xie</a><sup>1</sup>,
+              <a href="https://shiyi-lan.github.io/">Shiyi Lan</a><sup>2</sup>,
+              <a href="https://weichen582.github.io/">Chen Wei</a><sup>1</sup>
+            </span>
+          </div>
+
+          <div class="is-size-6 publication-authors" style="margin-top: 10px;">
+            <span class="author-block"><sup>1</sup>Rice University,</span>
+            <span class="author-block"><sup>2</sup>NVIDIA</span>
+          </div>
+
+          <div class="is-size-6 publication-authors" style="margin-top: 5px;">
+            <span class="author-block"><b>ICLR 2026</b></span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- arXiv Link. -->
+              <span class="link-block">
+                <a href="#"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href="#"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Teaser: Results First ===== -->
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <div class="columns is-centered">
+        <div class="column is-half">
+          <figure>
+            <img src="./static/images/action_vc33_00.png" alt="4x Action Reduction on vc33" style="width: 100%; height: auto;">
+            <figcaption class="has-text-centered" style="margin-top: 10px; font-size: 0.9em; color: #555;">
+              <b>(a) 4&times; action reduction on vc33:</b> Our method reduces cumulative actions from 79 to 19 steps, approaching the optimal solution (22 steps).
+            </figcaption>
+          </figure>
+        </div>
+        <div class="column is-half">
+          <figure>
+            <img src="./static/images/action_analysis-1.png" alt="Performance across all games" style="width: 100%; height: auto;">
+            <figcaption class="has-text-centered" style="margin-top: 10px; font-size: 0.9em; color: #555;">
+              <b>(b) Consistent gains across games:</b> Our approach improves action efficiency on all four ARC-AGI-3 games, enabling levels that base models cannot reach.
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+      <h2 class="subtitle has-text-centered" style="margin-top: 20px;">
+        We combine <b>online RLVR</b> and <b>level-synchronized parallel sampling</b> to enable LLM agents to efficiently learn novel interactive game mechanics &mdash; reducing actions by up to <b>4&times;</b> and transferring learned skills to new domains.
+      </h2>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Key Results Highlights ===== -->
+<section class="section" style="background-color: #f5f5f5;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Key Results</h2>
+
+        <div class="content">
+          <div class="columns is-multiline" style="margin-top: 20px;">
+            <div class="column is-one-third">
+              <div style="background: white; padding: 25px; border-radius: 8px; text-align: center; height: 100%;">
+                <p style="font-size: 2.5em; font-weight: bold; color: #3273dc; margin-bottom: 5px;">4&times;</p>
+                <p style="font-size: 1.1em; font-weight: 600;">Action Reduction</p>
+                <p style="color: #666; font-size: 0.9em;">on vc33: 79 &rarr; 19 cumulative actions, approaching optimal (22)</p>
+              </div>
+            </div>
+            <div class="column is-one-third">
+              <div style="background: white; padding: 25px; border-radius: 8px; text-align: center; height: 100%;">
+                <p style="font-size: 2.5em; font-weight: bold; color: #3273dc; margin-bottom: 5px;">+13.7%</p>
+                <p style="font-size: 1.1em; font-weight: 600;">Transfer to ALFWorld</p>
+                <p style="color: #666; font-size: 0.9em;">Skills learned on ARC-AGI-3 nearly double ALFWorld baseline (14.8% &rarr; 28.5%)</p>
+              </div>
+            </div>
+            <div class="column is-one-third">
+              <div style="background: white; padding: 25px; border-radius: 8px; text-align: center; height: 100%;">
+                <p style="font-size: 2.5em; font-weight: bold; color: #3273dc; margin-bottom: 5px;">7B</p>
+                <p style="font-size: 1.1em; font-weight: 600;">Outperforms Frontier Models</p>
+                <p style="color: #666; font-size: 0.9em;">Qwen2.5-7B with our method surpasses GPT-5 and O3 on ARC-AGI-3</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Abstract ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            ARC-AGI-3 is a recently proposed benchmark that measures how quickly AI systems acquire novel skills through interactive game play. Each game features unique mechanics that must be discovered through trial-and-error exploration, with no instructions provided. Frontier models &mdash; including GPT-5, O3, and Grok 4 &mdash; fail dramatically on these tasks, exhausting large action budgets while making minimal progress.
+          </p>
+          <p>
+            We identify two root causes: <b>(1)</b> game mechanics are fundamentally novel and lie outside pretrained knowledge, and <b>(2)</b> learning signals are extremely sparse, as only level completion provides reward feedback. To address these challenges, we propose two complementary techniques: <b>multi-turn RLVR</b> (Reinforcement Learning with Verifiable Rewards) that fine-tunes the model online on level-completing trajectories, and <b>level-synchronized parallel sampling</b> that runs multiple agents simultaneously and shares progress when any agent completes a level.
+          </p>
+          <p>
+            Together, these techniques reduce cumulative actions by up to <b>4&times;</b> on vc33 and generalize to ALFWorld, nearly doubling baseline performance from <b>14.8% &rarr; 28.5%</b>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== The Challenge: ARC-AGI-3 Games ===== -->
+<section class="section" style="background-color: #f5f5f5;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">The Challenge: ARC-AGI-3 Games</h2>
+
+        <div class="content has-text-justified" style="margin-bottom: 25px;">
+          <p>
+            ARC-AGI-3 presents interactive games where agents must discover novel mechanics through trial-and-error. Each game has multiple levels of increasing difficulty. No instructions are provided &mdash; the agent observes a 64&times;64 RGB frame and must figure out what to do. The official metric is <b>action efficiency</b>: fewer actions = faster skill acquisition.
+          </p>
+        </div>
+
+        <div class="columns is-centered is-multiline">
+          <div class="column is-one-quarter has-text-centered">
+            <figure>
+              <img src="./static/images/ft09.png" alt="ft09 game" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;">
+              <figcaption style="margin-top: 8px; font-size: 0.85em; color: #555;"><b>ft09</b> &mdash; Grid-based spatial puzzle</figcaption>
+            </figure>
+          </div>
+          <div class="column is-one-quarter has-text-centered">
+            <figure>
+              <img src="./static/images/lp85.png" alt="lp85 game" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;">
+              <figcaption style="margin-top: 8px; font-size: 0.85em; color: #555;"><b>lp85</b> &mdash; Board with colored pieces</figcaption>
+            </figure>
+          </div>
+          <div class="column is-one-quarter has-text-centered">
+            <figure>
+              <img src="./static/images/vc33.png" alt="vc33 game" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;">
+              <figcaption style="margin-top: 8px; font-size: 0.85em; color: #555;"><b>vc33</b> &mdash; Liquid level coordination</figcaption>
+            </figure>
+          </div>
+          <div class="column is-one-quarter has-text-centered">
+            <figure>
+              <img src="./static/images/as66.png" alt="as66 game" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;">
+              <figcaption style="margin-top: 8px; font-size: 0.85em; color: #555;"><b>as66</b> &mdash; Shape manipulation</figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <div class="content has-text-justified" style="margin-top: 15px;">
+          <p>
+            Each game features distinct mechanics: click-based interactions (ft09, lp85, vc33) and combined control schemes (as66), all with a 4,096+ discrete action space. Levels progress in difficulty &mdash; for example, vc33 starts with a single block (Level 1) and builds up to conditional targets (Level 5).
+          </p>
+        </div>
+
+        <!-- Level progression example -->
+        <div class="columns is-centered is-multiline" style="margin-top: 15px;">
+          <div class="column is-one-quarter has-text-centered">
+            <img src="./static/images/vc33_l1.png" alt="vc33 Level 1" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;">
+            <p style="font-size: 0.8em; color: #888; margin-top: 5px;">vc33 Level 1</p>
+          </div>
+          <div class="column is-one-quarter has-text-centered">
+            <img src="./static/images/vc33_l3.png" alt="vc33 Level 3" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;">
+            <p style="font-size: 0.8em; color: #888; margin-top: 5px;">vc33 Level 3</p>
+          </div>
+          <div class="column is-one-quarter has-text-centered">
+            <img src="./static/images/vc33_l4.png" alt="vc33 Level 4" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;">
+            <p style="font-size: 0.8em; color: #888; margin-top: 5px;">vc33 Level 4</p>
+          </div>
+          <div class="column is-one-quarter has-text-centered">
+            <img src="./static/images/vc33_l5.png" alt="vc33 Level 5" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;">
+            <p style="font-size: 0.8em; color: #888; margin-top: 5px;">vc33 Level 5</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Method: Framework ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Our Approach</h2>
+
+        <div class="content has-text-justified" style="margin-bottom: 30px;">
+          <p>
+            We address the twin challenges of <b>novelty</b> (mechanics outside pretrained knowledge) and <b>sparsity</b> (only level completion provides reward) with two complementary techniques that work together in a unified framework.
+          </p>
+        </div>
+
+        <div style="margin: 40px 0;">
+          <img src="./static/images/framework-1.png" alt="Framework: Level-Synchronized Parallel Sampling with Online RLVR" style="width: 100%; max-width: 950px; margin: 0 auto; display: block;">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Key Components ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Key Components</h2>
+
+        <h3 class="title is-4">1. Level-Synchronized Parallel Sampling</h3>
+        <div class="content has-text-justified">
+          <p>
+            With sparse rewards and long action sequences, any single agent has a low probability of completing a level. We run <b>k=128 parallel agents</b> exploring independently. When <em>any</em> agent completes a level, all agents synchronize to that state and resume exploration on the next level. This extends the classical pass@k framework from single-step code generation to multi-step interactive tasks.
+          </p>
+        </div>
+
+        <h3 class="title is-4">2. Online Multi-Turn RLVR with Trajectory Chunking</h3>
+        <div class="content has-text-justified">
+          <p>
+            Long trajectories (100+ steps) without intermediate feedback make credit assignment difficult. We divide trajectories into <b>segments of &le;5 actions</b>, evaluate level completion after each segment, and use these binary rewards to update the policy via <b>GRPO</b> (Group Relative Policy Optimization). This enables the model to learn from successful exploration patterns and adapt online to novel game mechanics.
+          </p>
+          <ul>
+            <li><b>Trajectory chunking:</b> Segments of &le;C actions with binary completion rewards</li>
+            <li><b>GRPO advantage:</b> Group-relative normalization across all segments</li>
+            <li><b>KL-regularized updates:</b> Prevents catastrophic forgetting while adapting to new mechanics</li>
+          </ul>
+        </div>
+
+        <h3 class="title is-4">3. How They Work Together</h3>
+        <div class="content has-text-justified">
+          <p>
+            In each training round, k parallel agents generate trajectories with C-action chunks. Level-synchronization shares progress across agents. Completed segments are annotated with rewards and used to update the policy via GRPO. The improved policy is then deployed for the next round of exploration, creating a virtuous cycle of exploration and learning.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Main Results ===== -->
+<section class="section" style="background-color: #f5f5f5;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Results: Cumulative Actions per Level</h2>
+
+        <div class="content has-text-justified">
+          <p>
+            We evaluate on four ARC-AGI-3 games using Qwen2.5-7B-Instruct as the base model. The metric is <b>cumulative actions to reach each level</b> &mdash; lower is better, indicating faster skill acquisition.
+          </p>
+        </div>
+
+        <div class="content">
+          <div style="overflow-x: auto;">
+            <table class="table is-bordered is-striped is-narrow is-hoverable" style="margin: 0 auto; background-color: white; font-size: 0.85em;">
+              <thead>
+                <tr>
+                  <th>Game</th>
+                  <th>Method</th>
+                  <th>Level 1</th>
+                  <th>Level 2</th>
+                  <th>Level 3</th>
+                  <th>Level 4</th>
+                  <th>Level 5</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- vc33 -->
+                <tr style="background-color: #e8f4f8;">
+                  <td colspan="7"><strong>vc33</strong> &mdash; Liquid level coordination</td>
+                </tr>
+                <tr style="background-color: #e8f5ec;">
+                  <td rowspan="3">vc33</td>
+                  <td>Optimal</td>
+                  <td>2</td><td>4</td><td>8</td><td>15</td><td>22</td>
+                </tr>
+                <tr style="background-color: #fbf2e6;">
+                  <td>Base + Parallel</td>
+                  <td>1</td><td>2</td><td>5</td><td>70</td><td>79</td>
+                </tr>
+                <tr style="background-color: #dcebff;">
+                  <td><b>Ours (Full)</b></td>
+                  <td><b>0</b></td><td><b>1</b></td><td><b>4</b></td><td><b>15</b></td><td><b>19</b></td>
+                </tr>
+
+                <!-- ft09 -->
+                <tr style="background-color: #e8f4f8;">
+                  <td colspan="7"><strong>ft09</strong> &mdash; Grid-based spatial puzzle</td>
+                </tr>
+                <tr style="background-color: #e8f5ec;">
+                  <td rowspan="3">ft09</td>
+                  <td>Optimal</td>
+                  <td>4</td><td>7</td><td>13</td><td>23</td><td>33</td>
+                </tr>
+                <tr style="background-color: #fbf2e6;">
+                  <td>Base + Parallel</td>
+                  <td>7</td><td>9</td><td>&gt;100</td><td>&gt;100</td><td>&gt;100</td>
+                </tr>
+                <tr style="background-color: #dcebff;">
+                  <td><b>Ours (Full)</b></td>
+                  <td><b>3</b></td><td><b>7</b></td><td><b>78</b></td><td>&gt;100</td><td>&gt;100</td>
+                </tr>
+
+                <!-- lp85 -->
+                <tr style="background-color: #e8f4f8;">
+                  <td colspan="7"><strong>lp85</strong> &mdash; Board with colored pieces</td>
+                </tr>
+                <tr style="background-color: #e8f5ec;">
+                  <td rowspan="3">lp85</td>
+                  <td>Optimal</td>
+                  <td>5</td><td>13</td><td>29</td><td>&gt;29</td><td>&gt;29</td>
+                </tr>
+                <tr style="background-color: #fbf2e6;">
+                  <td>Base + Parallel</td>
+                  <td><b>1</b></td><td>66</td><td>&gt;100</td><td>&gt;100</td><td>&gt;100</td>
+                </tr>
+                <tr style="background-color: #dcebff;">
+                  <td><b>Ours (Full)</b></td>
+                  <td><b>1</b></td><td><b>29</b></td><td>&gt;100</td><td>&gt;100</td><td>&gt;100</td>
+                </tr>
+
+                <!-- as66 -->
+                <tr style="background-color: #e8f4f8;">
+                  <td colspan="7"><strong>as66</strong> &mdash; Shape manipulation</td>
+                </tr>
+                <tr style="background-color: #e8f5ec;">
+                  <td rowspan="3">as66</td>
+                  <td>Optimal</td>
+                  <td>3</td><td>6</td><td>14</td><td>20</td><td>&gt;150</td>
+                </tr>
+                <tr style="background-color: #fbf2e6;">
+                  <td>Base + Parallel</td>
+                  <td><b>1</b></td><td>4</td><td>6</td><td>17</td><td>&gt;150</td>
+                </tr>
+                <tr style="background-color: #dcebff;">
+                  <td><b>Ours (Full)</b></td>
+                  <td><b>1</b></td><td><b>2</b></td><td><b>4</b></td><td><b>6</b></td><td>&gt;150</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top: 15px; text-align: center; font-size: 0.9em; color: #666;">
+            Cumulative actions required to reach each level. Green: Optimal solution. Orange: Parallel sampling only. Blue: Our full method (Parallel + RLVR). <b>Bold</b> = best model performance. Base model alone scores &gt;1000 on most levels beyond Level 1.
+          </p>
+        </div>
+
+        <div class="content has-text-justified" style="margin-top: 30px;">
+          <h3 class="title is-4">Key Findings</h3>
+          <ul>
+            <li><b>Both components contribute:</b> Parallel sampling alone enables levels the base model cannot reach; RLVR further reduces actions by ~4&times; on vc33 (79&rarr;19)</li>
+            <li><b>RLVR unlocks new levels:</b> On ft09, RLVR enables Level 3 (78 actions) where parallel sampling alone fails (&gt;100)</li>
+            <li><b>Near-optimal on vc33:</b> Our method achieves 19 cumulative actions vs. the optimal 22, using only a 7B parameter model</li>
+            <li><b>Cross-game generalization:</b> Consistent improvements across all 4 games with distinct mechanics and action spaces</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Per-Game Action Analysis ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Per-Game Action Analysis</h2>
+
+        <div class="columns is-centered is-multiline" style="margin-top: 15px;">
+          <div class="column is-half">
+            <figure>
+              <img src="./static/images/action_vc33_00.png" alt="vc33 action analysis" style="width: 100%; border: 1px solid #ddd; padding: 5px; border-radius: 4px;">
+              <figcaption class="has-text-centered" style="margin-top: 8px; font-size: 0.85em; color: #555;">vc33 &mdash; Largest improvement: 4&times; reduction</figcaption>
+            </figure>
+          </div>
+          <div class="column is-half">
+            <figure>
+              <img src="./static/images/action_ft09_00.png" alt="ft09 action analysis" style="width: 100%; border: 1px solid #ddd; padding: 5px; border-radius: 4px;">
+              <figcaption class="has-text-centered" style="margin-top: 8px; font-size: 0.85em; color: #555;">ft09 &mdash; RLVR enables Level 3</figcaption>
+            </figure>
+          </div>
+          <div class="column is-half">
+            <figure>
+              <img src="./static/images/action_lp85_00.png" alt="lp85 action analysis" style="width: 100%; border: 1px solid #ddd; padding: 5px; border-radius: 4px;">
+              <figcaption class="has-text-centered" style="margin-top: 8px; font-size: 0.85em; color: #555;">lp85 &mdash; Halves Level 2 actions</figcaption>
+            </figure>
+          </div>
+          <div class="column is-half">
+            <figure>
+              <img src="./static/images/action_as66_00.png" alt="as66 action analysis" style="width: 100%; border: 1px solid #ddd; padding: 5px; border-radius: 4px;">
+              <figcaption class="has-text-centered" style="margin-top: 8px; font-size: 0.85em; color: #555;">as66 &mdash; Near-optimal through Level 4</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Transfer Learning ===== -->
+<section class="section" style="background-color: #f5f5f5;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Transfer Learning to ALFWorld</h2>
+
+        <div class="content has-text-justified">
+          <p>
+            A critical question: do the learned skills generalize beyond the training game, or are they game-specific memorization? We evaluate models trained on individual ARC-AGI-3 games on <b>ALFWorld</b>, a completely different embodied reasoning benchmark. The results show substantial, consistent improvements.
+          </p>
+        </div>
+
+        <div class="content">
+          <div style="overflow-x: auto;">
+            <table class="table is-bordered is-striped is-narrow is-hoverable" style="margin: 0 auto; background-color: white; font-size: 0.85em;">
+              <thead>
+                <tr>
+                  <th>Training Game</th>
+                  <th>Pick</th>
+                  <th>Look</th>
+                  <th>Clean</th>
+                  <th>Heat</th>
+                  <th>Cool</th>
+                  <th>Pick2</th>
+                  <th>All (Avg)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="background-color: #e8f5ec;">
+                  <td><b>Baseline</b></td>
+                  <td>33.4</td><td>21.6</td><td>19.3</td><td>6.9</td><td>2.8</td><td>3.2</td><td>14.8</td>
+                </tr>
+                <tr style="background-color: #dcebff;">
+                  <td><b>Ours (ft09)</b></td>
+                  <td>60.6</td><td>43.6</td><td><b>34.4</b></td><td>6.3</td><td>9.4</td><td>0.0</td><td><b>28.5</b></td>
+                </tr>
+                <tr style="background-color: #dcebff;">
+                  <td><b>Ours (lp85)</b></td>
+                  <td>44.3</td><td>47.8</td><td>27.2</td><td>3.1</td><td>5.6</td><td>3.1</td><td>22.7</td>
+                </tr>
+                <tr style="background-color: #dcebff;">
+                  <td><b>Ours (vc33)</b></td>
+                  <td><b>60.7</b></td><td>41.7</td><td>20.0</td><td><b>21.4</b></td><td><b>11.1</b></td><td>4.5</td><td>26.6</td>
+                </tr>
+                <tr style="background-color: #dcebff;">
+                  <td><b>Ours (as66)</b></td>
+                  <td>50.9</td><td><b>55.8</b></td><td>26.4</td><td>19.6</td><td>9.3</td><td><b>5.4</b></td><td>27.7</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top: 15px; text-align: center; font-size: 0.9em; color: #666;">
+            ALFWorld task success rates (%). Models trained on ARC-AGI-3 games substantially outperform the baseline across task types.
+          </p>
+        </div>
+
+        <div class="content has-text-justified" style="margin-top: 20px;">
+          <h3 class="title is-4">Transfer Insights</h3>
+          <ul>
+            <li><b>Substantial gains:</b> All four game-trained models outperform baseline, with improvements of +7.9 to +13.7 percentage points</li>
+            <li><b>Complementary skills:</b> Different games teach different capabilities &mdash; ft09 excels at Clean (34.4%), vc33 at Heat (21.4%), as66 at Look (55.8%)</li>
+            <li><b>Not memorization:</b> Skills transfer to an entirely different domain, confirming that the model learns generalizable interactive reasoning strategies</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Acknowledgment ===== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Citation</h2>
+        <div class="content">
+          <pre style="background-color: #f5f5f5; padding: 15px; border-radius: 6px; font-size: 0.85em; overflow-x: auto;">@inproceedings{xie2026adapting,
+  title={Adapting LLM Agents to Interactive Reasoning through Parallel Exploration},
+  author={Xie, Yunfei and Lan, Shiyi and Wei, Chen},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2026}
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p style="text-align: center;">
+            This website template is borrowed from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>,
+            licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
