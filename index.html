@@ -53,7 +53,6 @@
 
           <div class="column has-text-centered">
             <div class="publication-links">
-              <!-- arXiv Link. -->
               <span class="link-block">
                 <a href="#"
                    class="external-link button is-normal is-rounded is-dark">
@@ -63,7 +62,6 @@
                   <span>arXiv</span>
                 </a>
               </span>
-              <!-- Code Link. -->
               <span class="link-block">
                 <a href="#"
                    class="external-link button is-normal is-rounded is-dark">
@@ -82,82 +80,29 @@
 </section>
 
 
-<!-- ===== Teaser: Results First ===== -->
+<!-- ===== Section 1: Teaser ===== -->
 <section class="hero teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
       <div class="columns is-centered">
-        <div class="column is-half">
+        <div class="column is-full-width">
           <figure>
-            <img src="./static/images/action_vc33-1.png" alt="4x Action Reduction on vc33" style="width: 100%; height: auto;">
+            <img src="./static/images/action_analysis-1.png" alt="Cumulative actions across all four ARC-AGI-3 games" style="width: 100%; height: auto;">
             <figcaption class="has-text-centered" style="margin-top: 10px; font-size: 0.9em; color: #555;">
-              <b>(a) 4&times; action reduction on vc33:</b> Our method reduces cumulative actions from 79 to 19 steps, approaching the optimal solution (22 steps).
-            </figcaption>
-          </figure>
-        </div>
-        <div class="column is-half">
-          <figure>
-            <img src="./static/images/action_analysis-1.png" alt="Performance across all games" style="width: 100%; height: auto;">
-            <figcaption class="has-text-centered" style="margin-top: 10px; font-size: 0.9em; color: #555;">
-              <b>(b) Consistent gains across games:</b> Our approach improves action efficiency on all four ARC-AGI-3 games, enabling levels that base models cannot reach.
+              Cumulative actions required to reach each level across four ARC-AGI-3 games. Steeper curves indicate faster level completion. Our full method consistently reaches higher levels with fewer actions than the base model and parallel sampling alone.
             </figcaption>
           </figure>
         </div>
       </div>
       <h2 class="subtitle has-text-centered" style="margin-top: 20px;">
-        We combine <b>online RLVR</b> and <b>level-synchronized parallel sampling</b> to enable LLM agents to efficiently learn novel interactive game mechanics &mdash; reducing actions by up to <b>4&times;</b> and transferring learned skills to new domains.
+        We combine <b>online RLVR</b> and <b>level-synchronized parallel sampling</b> to enable LLM agents to efficiently learn novel interactive game mechanics in ARC-AGI-3, reducing actions by up to <b>4&times;</b> and transferring learned skills to new domains.
       </h2>
     </div>
   </div>
 </section>
 
 
-<!-- ===== Core Contributions ===== -->
-<section class="section" style="background-color: #f5f5f5;">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Core Contributions</h2>
-
-        <div class="content has-text-justified">
-          <ul>
-            <li><b>Multi-turn RLVR for interactive reasoning:</b> We propose an online reinforcement learning framework with trajectory chunking that enables LLM agents to adapt to fundamentally novel game mechanics through trial-and-error exploration.</li>
-            <li><b>Level-synchronized parallel sampling:</b> We extend the classical pass@k framework from single-step tasks to multi-step interactive settings, running k=128 parallel agents with progress synchronization upon level completion.</li>
-            <li><b>Up to 4&times; action reduction:</b> On vc33, our method reduces cumulative actions from 79 to 19 steps, approaching the optimal solution (22 steps), using only a 7B parameter model.</li>
-            <li><b>Generalizable skill acquisition:</b> Skills learned on ARC-AGI-3 games transfer to ALFWorld, nearly doubling baseline performance (14.8% &rarr; 28.5%), confirming the model learns reusable interactive reasoning strategies rather than game-specific memorization.</li>
-            <li><b>7B model outperforms frontier models:</b> Qwen2.5-7B-Instruct with our method surpasses GPT-5, O3, and Grok 4 on ARC-AGI-3, demonstrating that efficient learning strategies matter more than raw model scale.</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- ===== Abstract ===== -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
-          <p>
-            ARC-AGI-3 is a recently proposed benchmark that measures how quickly AI systems acquire novel skills through interactive game play. Each game features unique mechanics that must be discovered through trial-and-error exploration, with no instructions provided. Frontier models &mdash; including GPT-5, O3, and Grok 4 &mdash; fail dramatically on these tasks, exhausting large action budgets while making minimal progress.
-          </p>
-          <p>
-            We identify two root causes: <b>(1)</b> game mechanics are fundamentally novel and lie outside pretrained knowledge, and <b>(2)</b> learning signals are extremely sparse, as only level completion provides reward feedback. To address these challenges, we propose two complementary techniques: <b>multi-turn RLVR</b> (Reinforcement Learning with Verifiable Rewards) that fine-tunes the model online on level-completing trajectories, and <b>level-synchronized parallel sampling</b> that runs multiple agents simultaneously and shares progress when any agent completes a level.
-          </p>
-          <p>
-            Together, these techniques reduce cumulative actions by up to <b>4&times;</b> on vc33 and generalize to ALFWorld, nearly doubling baseline performance from <b>14.8% &rarr; 28.5%</b>.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- ===== The Challenge: ARC-AGI-3 Games ===== -->
+<!-- ===== Section 2: The Challenge: ARC-AGI-3 Games ===== -->
 <section class="section" style="background-color: #f5f5f5;">
   <div class="container is-max-desktop">
     <div class="columns is-centered">
@@ -166,7 +111,7 @@
 
         <div class="content has-text-justified" style="margin-bottom: 25px;">
           <p>
-            ARC-AGI-3 presents interactive games where agents must discover novel mechanics through trial-and-error. Each game has multiple levels of increasing difficulty. No instructions are provided &mdash; the agent observes a 64&times;64 RGB frame and must figure out what to do. The official metric is <b>action efficiency</b>: fewer actions = faster skill acquisition.
+            ARC-AGI-3 is an interactive reasoning benchmark that measures how quickly AI systems acquire novel skills through game play. Each game features unique mechanics that must be discovered through trial-and-error exploration, with no instructions provided. The agent observes a 64&times;64 RGB frame and must figure out what to do on its own. The official metric is <b>action efficiency</b>: an agent that learns faster wastes fewer actions, so the number of actions spent to complete a level directly reflects how quickly it acquires knowledge of the game.
           </p>
         </div>
 
@@ -174,36 +119,35 @@
           <div class="column is-one-quarter has-text-centered">
             <figure>
               <img src="./static/images/ft09.png" alt="ft09 game" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;">
-              <figcaption style="margin-top: 8px; font-size: 0.85em; color: #555;"><b>ft09</b> &mdash; Grid-based spatial puzzle</figcaption>
+              <figcaption style="margin-top: 8px; font-size: 0.85em; color: #555;"><b>ft09</b>, grid-based spatial puzzle</figcaption>
             </figure>
           </div>
           <div class="column is-one-quarter has-text-centered">
             <figure>
               <img src="./static/images/lp85.png" alt="lp85 game" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;">
-              <figcaption style="margin-top: 8px; font-size: 0.85em; color: #555;"><b>lp85</b> &mdash; Board with colored pieces</figcaption>
+              <figcaption style="margin-top: 8px; font-size: 0.85em; color: #555;"><b>lp85</b>, board with colored pieces</figcaption>
             </figure>
           </div>
           <div class="column is-one-quarter has-text-centered">
             <figure>
               <img src="./static/images/vc33.png" alt="vc33 game" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;">
-              <figcaption style="margin-top: 8px; font-size: 0.85em; color: #555;"><b>vc33</b> &mdash; Liquid level coordination</figcaption>
+              <figcaption style="margin-top: 8px; font-size: 0.85em; color: #555;"><b>vc33</b>, liquid level coordination</figcaption>
             </figure>
           </div>
           <div class="column is-one-quarter has-text-centered">
             <figure>
               <img src="./static/images/as66.png" alt="as66 game" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;">
-              <figcaption style="margin-top: 8px; font-size: 0.85em; color: #555;"><b>as66</b> &mdash; Shape manipulation</figcaption>
+              <figcaption style="margin-top: 8px; font-size: 0.85em; color: #555;"><b>as66</b>, shape manipulation</figcaption>
             </figure>
           </div>
         </div>
 
         <div class="content has-text-justified" style="margin-top: 15px;">
           <p>
-            Each game features distinct mechanics: click-based interactions (ft09, lp85, vc33) and combined control schemes (as66), all with a 4,096+ discrete action space. Levels progress in difficulty &mdash; for example, vc33 starts with a single block (Level 1) and builds up to conditional targets (Level 5).
+            Each game features distinct mechanics, including click-based interactions and combined control schemes, all with a 4,096+ discrete action space. Levels progress in difficulty. For example, vc33 starts with a single block at Level 1 and builds up to conditional targets at Level 5.
           </p>
         </div>
 
-        <!-- Level progression example -->
         <div class="columns is-centered is-multiline" style="margin-top: 15px;">
           <div class="column is-one-quarter has-text-centered">
             <img src="./static/images/vc33_l1.png" alt="vc33 Level 1" style="width: 100%; border: 1px solid #ddd; border-radius: 4px;">
@@ -228,58 +172,23 @@
 </section>
 
 
-<!-- ===== Method: Framework ===== -->
-<section class="section">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-full-width">
-        <h2 class="title is-3">Our Approach</h2>
-
-        <div class="content has-text-justified" style="margin-bottom: 30px;">
-          <p>
-            We address the twin challenges of <b>novelty</b> (mechanics outside pretrained knowledge) and <b>sparsity</b> (only level completion provides reward) with two complementary techniques that work together in a unified framework.
-          </p>
-        </div>
-
-        <div style="margin: 40px 0;">
-          <img src="./static/images/framework-1.png" alt="Framework: Level-Synchronized Parallel Sampling with Online RLVR" style="width: 100%; max-width: 950px; margin: 0 auto; display: block;">
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- ===== Key Components ===== -->
+<!-- ===== Section 3: Why ARC-AGI-3 is Hard ===== -->
 <section class="section">
   <div class="container is-max-desktop">
     <div class="columns is-centered">
       <div class="column is-full-width">
-        <h2 class="title is-3">Key Components</h2>
+        <h2 class="title is-3">Why ARC-AGI-3 is Hard</h2>
 
-        <h3 class="title is-4">1. Level-Synchronized Parallel Sampling</h3>
         <div class="content has-text-justified">
           <p>
-            With sparse rewards and long action sequences, any single agent has a low probability of completing a level. We run <b>k=128 parallel agents</b> exploring independently. When <em>any</em> agent completes a level, all agents synchronize to that state and resume exploration on the next level. This extends the classical pass@k framework from single-step code generation to multi-step interactive tasks.
-          </p>
-        </div>
-
-        <h3 class="title is-4">2. Online Multi-Turn RLVR with Trajectory Chunking</h3>
-        <div class="content has-text-justified">
-          <p>
-            Long trajectories (100+ steps) without intermediate feedback make credit assignment difficult. We divide trajectories into <b>segments of &le;5 actions</b>, evaluate level completion after each segment, and use these binary rewards to update the policy via <b>GRPO</b> (Group Relative Policy Optimization). This enables the model to learn from successful exploration patterns and adapt online to novel game mechanics.
+            Frontier models fail dramatically on ARC-AGI-3, exhausting large action budgets with almost no progress, while humans solve the same games with ease. We attribute this gap to two primary sources of difficulty:
           </p>
           <ul>
-            <li><b>Trajectory chunking:</b> Segments of &le;C actions with binary completion rewards</li>
-            <li><b>GRPO advantage:</b> Group-relative normalization across all segments</li>
-            <li><b>KL-regularized updates:</b> Prevents catastrophic forgetting while adapting to new mechanics</li>
+            <li><b>Fundamentally novel mechanics.</b> Each ARC-AGI-3 game is built on distinct mechanics designed to be fundamentally different from one another, and no instructions or goals are provided to the agent. The games rely only on core knowledge priors rather than specialized domain expertise, requiring the agent to adapt to unfamiliar environments through exploration alone. These mechanics lie outside pretrained knowledge, so models cannot rely on memorized patterns.</li>
+            <li><b>Extremely sparse learning signals.</b> The only feedback ARC-AGI-3 provides is level completion itself, and most action sequences do not achieve it. Most individual actions either produce no useful feedback or trigger immediate failure such as a level reset. Since each level typically requires tens of sequential correct actions, successful trajectories are exceedingly rare. This sparsity makes it particularly difficult to apply RLVR, because the model almost never receives a positive reward to learn from.</li>
           </ul>
-        </div>
-
-        <h3 class="title is-4">3. How They Work Together</h3>
-        <div class="content has-text-justified">
           <p>
-            In each training round, k parallel agents generate trajectories with C-action chunks. Level-synchronization shares progress across agents. Completed segments are annotated with rewards and used to update the policy via GRPO. The improved policy is then deployed for the next round of exploration, creating a virtuous cycle of exploration and learning.
+            Extreme novelty and sparse rewards combine to make ARC-AGI-3 exceptionally hard, exposing core difficulties in interactive reasoning over long-horizon tasks.
           </p>
         </div>
       </div>
@@ -288,8 +197,63 @@
 </section>
 
 
-<!-- ===== Main Results ===== -->
+<!-- ===== Section 4: Our Approach ===== -->
 <section class="section" style="background-color: #f5f5f5;">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Our Approach</h2>
+
+        <div class="content has-text-justified" style="margin-bottom: 20px;">
+          <p>
+            We propose two complementary techniques that address each source of difficulty. Multi-turn RLVR handles novel game mechanics by adapting the model online through fine-tuning on level-completing trajectories. Level-synchronized parallel sampling counters the sparsity of learning signals by running multiple agents simultaneously and sharing progress whenever any agent completes a level.
+          </p>
+        </div>
+
+        <div style="margin: 30px 0;">
+          <img src="./static/images/framework-1.png" alt="Framework: Level-Synchronized Parallel Sampling with Online RLVR" style="width: 100%; max-width: 950px; margin: 0 auto; display: block;">
+        </div>
+
+        <h3 class="title is-4" style="margin-top: 30px;">Level-Synchronized Parallel Sampling</h3>
+        <div class="content has-text-justified">
+          <p>
+            The sparse reward structure of ARC-AGI-3 makes any single trajectory unlikely to complete a level, since success demands a long sequence of correct actions with no intermediate positive feedback. A single trajectory has very low probability of completing a level, but running k parallel trajectories substantially increases the chance that at least one succeeds.
+          </p>
+          <p>
+            We instantiate k=128 parallel agent instances, each operating in its own environment initialized at the first level. Each agent independently attempts to complete the current level through its own sequence of actions. When any agent completes the current level, all other agents discard their partial progress and advance to the level-completing state. From this synchronized state, all k agents resume independent exploration on the next level. This process repeats until all levels are completed or exploration terminates.
+          </p>
+          <p>
+            This synchronization mechanism directly addresses the sparse reward problem. Once any agent completes the current level, that progress is shared across all agents rather than being lost, so the k agents collectively need to find only one solution per level instead of each agent independently solving all levels from scratch.
+          </p>
+        </div>
+
+        <h3 class="title is-4">Online Multi-Turn RLVR with Trajectory Chunking</h3>
+        <div class="content has-text-justified">
+          <p>
+            We apply multi-turn Reinforcement Learning with Verifiable Rewards to improve action selection. The model adapts its policy by learning from its own interactions with the game. Unlike offline RL pipelines that train on a fixed dataset before deployment, our online approach interleaves policy updates with environment interaction.
+          </p>
+          <p>
+            Many levels in ARC-AGI-3 require dozens of attempts to complete, with individual episodes spanning 100 or more steps. Running until level completion in a single training step is problematic: the agent may execute a long sequence of actions without receiving any positive feedback, and even when the level is eventually completed, attributing a single reward across an excessively long action sequence makes credit assignment difficult.
+          </p>
+          <p>
+            To address this, we introduce trajectory chunking: rather than running until level completion before assigning a reward, we divide each trajectory into segments of at most C=5 actions and evaluate whether the level was completed after each segment. Each segment receives a binary reward, +1.0 if the level was completed and 0.0 otherwise. This bounds the length of each training trajectory, ensuring that when a positive reward is obtained, it can be meaningfully attributed to the actions within that segment. We then update the policy using GRPO with KL-regularized updates to prevent catastrophic forgetting while adapting to new mechanics.
+          </p>
+        </div>
+
+        <h3 class="title is-4">How They Work Together</h3>
+        <div class="content has-text-justified">
+          <p>
+            At each round, k parallel agents interact with the environment in chunks of C actions, with level synchronization sharing progress whenever any agent completes a level. The resulting trajectory segments, each annotated with a reward indicating whether level completion occurred, are used to update the policy via RLVR. The improved policy is then deployed for the next round of parallel sampling, improving the agent's action selection over successive rounds.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== Section 5: Results ===== -->
+<section class="section">
   <div class="container is-max-desktop">
     <div class="columns is-centered">
       <div class="column is-full-width">
@@ -297,11 +261,51 @@
 
         <div class="content has-text-justified">
           <p>
-            We evaluate on four ARC-AGI-3 games using Qwen2.5-7B-Instruct as the base model. The metric is <b>cumulative actions to reach each level</b> &mdash; lower is better, indicating faster skill acquisition.
+            We evaluate on four ARC-AGI-3 games using Qwen2.5-7B-Instruct as the base model. The metric is cumulative actions to reach each level, where lower values indicate faster skill acquisition.
           </p>
         </div>
 
-        <div class="content">
+        <!-- Figures first -->
+        <div class="columns is-centered is-multiline" style="margin-top: 15px;">
+          <div class="column is-half">
+            <figure>
+              <img src="./static/images/action_vc33-1.png" alt="vc33 action analysis" style="width: 100%; border: 1px solid #ddd; padding: 5px; border-radius: 4px;">
+              <figcaption class="has-text-centered" style="margin-top: 8px; font-size: 0.85em; color: #555;">vc33, largest improvement with 4&times; reduction</figcaption>
+            </figure>
+          </div>
+          <div class="column is-half">
+            <figure>
+              <img src="./static/images/action_ft09-1.png" alt="ft09 action analysis" style="width: 100%; border: 1px solid #ddd; padding: 5px; border-radius: 4px;">
+              <figcaption class="has-text-centered" style="margin-top: 8px; font-size: 0.85em; color: #555;">ft09, RLVR enables Level 3</figcaption>
+            </figure>
+          </div>
+          <div class="column is-half">
+            <figure>
+              <img src="./static/images/action_lp85-1.png" alt="lp85 action analysis" style="width: 100%; border: 1px solid #ddd; padding: 5px; border-radius: 4px;">
+              <figcaption class="has-text-centered" style="margin-top: 8px; font-size: 0.85em; color: #555;">lp85, halves Level 2 actions</figcaption>
+            </figure>
+          </div>
+          <div class="column is-half">
+            <figure>
+              <img src="./static/images/action_as66-1.png" alt="as66 action analysis" style="width: 100%; border: 1px solid #ddd; padding: 5px; border-radius: 4px;">
+              <figcaption class="has-text-centered" style="margin-top: 8px; font-size: 0.85em; color: #555;">as66, near-optimal through Level 4</figcaption>
+            </figure>
+          </div>
+        </div>
+
+        <!-- Findings -->
+        <div class="content has-text-justified" style="margin-top: 30px;">
+          <h3 class="title is-4">Key Findings</h3>
+          <ul>
+            <li><b>Both components contribute meaningfully.</b> Parallel sampling alone enables levels the base model cannot reach. Adding RLVR further reduces actions by approximately 4&times; on vc33, from 79 to 19 steps.</li>
+            <li><b>RLVR unlocks new levels.</b> On ft09, RLVR enables Level 3 completion at 78 actions where parallel sampling alone fails beyond 100.</li>
+            <li><b>Near-optimal on vc33.</b> Our method achieves 19 cumulative actions compared to the optimal 22, using only a 7B parameter model.</li>
+            <li><b>Consistent cross-game improvements.</b> The method improves action efficiency across all four games with distinct mechanics and action spaces.</li>
+          </ul>
+        </div>
+
+        <!-- Table -->
+        <div class="content" style="margin-top: 30px;">
           <div style="overflow-x: auto;">
             <table class="table is-bordered is-striped is-narrow is-hoverable" style="margin: 0 auto; background-color: white; font-size: 0.85em;">
               <thead>
@@ -316,9 +320,8 @@
                 </tr>
               </thead>
               <tbody>
-                <!-- vc33 -->
                 <tr style="background-color: #e8f4f8;">
-                  <td colspan="7"><strong>vc33</strong> &mdash; Liquid level coordination</td>
+                  <td colspan="7"><strong>vc33</strong>, liquid level coordination</td>
                 </tr>
                 <tr style="background-color: #e8f5ec;">
                   <td rowspan="3">vc33</td>
@@ -330,13 +333,12 @@
                   <td>1</td><td>2</td><td>5</td><td>70</td><td>79</td>
                 </tr>
                 <tr style="background-color: #dcebff;">
-                  <td><b>Ours (Full)</b></td>
+                  <td><b>Ours</b></td>
                   <td><b>0</b></td><td><b>1</b></td><td><b>4</b></td><td><b>15</b></td><td><b>19</b></td>
                 </tr>
 
-                <!-- ft09 -->
                 <tr style="background-color: #e8f4f8;">
-                  <td colspan="7"><strong>ft09</strong> &mdash; Grid-based spatial puzzle</td>
+                  <td colspan="7"><strong>ft09</strong>, grid-based spatial puzzle</td>
                 </tr>
                 <tr style="background-color: #e8f5ec;">
                   <td rowspan="3">ft09</td>
@@ -348,13 +350,12 @@
                   <td>7</td><td>9</td><td>&gt;100</td><td>&gt;100</td><td>&gt;100</td>
                 </tr>
                 <tr style="background-color: #dcebff;">
-                  <td><b>Ours (Full)</b></td>
+                  <td><b>Ours</b></td>
                   <td><b>3</b></td><td><b>7</b></td><td><b>78</b></td><td>&gt;100</td><td>&gt;100</td>
                 </tr>
 
-                <!-- lp85 -->
                 <tr style="background-color: #e8f4f8;">
-                  <td colspan="7"><strong>lp85</strong> &mdash; Board with colored pieces</td>
+                  <td colspan="7"><strong>lp85</strong>, board with colored pieces</td>
                 </tr>
                 <tr style="background-color: #e8f5ec;">
                   <td rowspan="3">lp85</td>
@@ -366,13 +367,12 @@
                   <td><b>1</b></td><td>66</td><td>&gt;100</td><td>&gt;100</td><td>&gt;100</td>
                 </tr>
                 <tr style="background-color: #dcebff;">
-                  <td><b>Ours (Full)</b></td>
+                  <td><b>Ours</b></td>
                   <td><b>1</b></td><td><b>29</b></td><td>&gt;100</td><td>&gt;100</td><td>&gt;100</td>
                 </tr>
 
-                <!-- as66 -->
                 <tr style="background-color: #e8f4f8;">
-                  <td colspan="7"><strong>as66</strong> &mdash; Shape manipulation</td>
+                  <td colspan="7"><strong>as66</strong>, shape manipulation</td>
                 </tr>
                 <tr style="background-color: #e8f5ec;">
                   <td rowspan="3">as66</td>
@@ -384,53 +384,15 @@
                   <td><b>1</b></td><td>4</td><td>6</td><td>17</td><td>&gt;150</td>
                 </tr>
                 <tr style="background-color: #dcebff;">
-                  <td><b>Ours (Full)</b></td>
+                  <td><b>Ours</b></td>
                   <td><b>1</b></td><td><b>2</b></td><td><b>4</b></td><td><b>6</b></td><td>&gt;150</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <p style="margin-top: 15px; text-align: center; font-size: 0.9em; color: #666;">
-            Cumulative actions required to reach each level. Green: Optimal solution. Orange: Parallel sampling only. Blue: Our full method (Parallel + RLVR). <b>Bold</b> = best model performance. Base model alone scores &gt;1000 on most levels beyond Level 1.
+            Cumulative actions required to reach each level. Green rows show the optimal solution. Orange rows show parallel sampling only. Blue rows show our full method combining parallel sampling with RLVR. Bold values indicate the best model performance. The base model alone scores above 1000 on most levels beyond Level 1.
           </p>
-        </div>
-
-        <div class="content has-text-justified" style="margin-top: 30px;">
-          <h3 class="title is-4">Key Findings</h3>
-          <ul>
-            <li><b>Both components contribute:</b> Parallel sampling alone enables levels the base model cannot reach; RLVR further reduces actions by ~4&times; on vc33 (79&rarr;19)</li>
-            <li><b>RLVR unlocks new levels:</b> On ft09, RLVR enables Level 3 (78 actions) where parallel sampling alone fails (&gt;100)</li>
-            <li><b>Near-optimal on vc33:</b> Our method achieves 19 cumulative actions vs. the optimal 22, using only a 7B parameter model</li>
-            <li><b>Cross-game generalization:</b> Consistent improvements across all 4 games with distinct mechanics and action spaces</li>
-          </ul>
-        </div>
-
-        <h3 class="title is-4" style="margin-top: 30px;">Action Analysis per Game</h3>
-        <div class="columns is-centered is-multiline" style="margin-top: 15px;">
-          <div class="column is-half">
-            <figure>
-              <img src="./static/images/action_vc33-1.png" alt="vc33 action analysis" style="width: 100%; border: 1px solid #ddd; padding: 5px; border-radius: 4px;">
-              <figcaption class="has-text-centered" style="margin-top: 8px; font-size: 0.85em; color: #555;">vc33 &mdash; Largest improvement: 4&times; reduction</figcaption>
-            </figure>
-          </div>
-          <div class="column is-half">
-            <figure>
-              <img src="./static/images/action_ft09-1.png" alt="ft09 action analysis" style="width: 100%; border: 1px solid #ddd; padding: 5px; border-radius: 4px;">
-              <figcaption class="has-text-centered" style="margin-top: 8px; font-size: 0.85em; color: #555;">ft09 &mdash; RLVR enables Level 3</figcaption>
-            </figure>
-          </div>
-          <div class="column is-half">
-            <figure>
-              <img src="./static/images/action_lp85-1.png" alt="lp85 action analysis" style="width: 100%; border: 1px solid #ddd; padding: 5px; border-radius: 4px;">
-              <figcaption class="has-text-centered" style="margin-top: 8px; font-size: 0.85em; color: #555;">lp85 &mdash; Halves Level 2 actions</figcaption>
-            </figure>
-          </div>
-          <div class="column is-half">
-            <figure>
-              <img src="./static/images/action_as66-1.png" alt="as66 action analysis" style="width: 100%; border: 1px solid #ddd; padding: 5px; border-radius: 4px;">
-              <figcaption class="has-text-centered" style="margin-top: 8px; font-size: 0.85em; color: #555;">as66 &mdash; Near-optimal through Level 4</figcaption>
-            </figure>
-          </div>
         </div>
       </div>
     </div>
@@ -447,7 +409,7 @@
 
         <div class="content has-text-justified">
           <p>
-            A critical question: do the learned skills generalize beyond the training game, or are they game-specific memorization? We evaluate models trained on individual ARC-AGI-3 games on <b>ALFWorld</b>, a completely different embodied reasoning benchmark. The results show substantial, consistent improvements.
+            To test whether the learned skills generalize beyond the training game or are merely game-specific memorization, we evaluate models trained on individual ARC-AGI-3 games on ALFWorld, a text-based household task benchmark with entirely different mechanics. The results show substantial and consistent improvements.
           </p>
         </div>
 
@@ -463,7 +425,7 @@
                   <th>Heat</th>
                   <th>Cool</th>
                   <th>Pick2</th>
-                  <th>All (Avg)</th>
+                  <th>All</th>
                 </tr>
               </thead>
               <tbody>
@@ -472,35 +434,34 @@
                   <td>33.4</td><td>21.6</td><td>19.3</td><td>6.9</td><td>2.8</td><td>3.2</td><td>14.8</td>
                 </tr>
                 <tr style="background-color: #dcebff;">
-                  <td><b>Ours (ft09)</b></td>
+                  <td><b>Ours, ft09</b></td>
                   <td>60.6</td><td>43.6</td><td><b>34.4</b></td><td>6.3</td><td>9.4</td><td>0.0</td><td><b>28.5</b></td>
                 </tr>
                 <tr style="background-color: #dcebff;">
-                  <td><b>Ours (lp85)</b></td>
+                  <td><b>Ours, lp85</b></td>
                   <td>44.3</td><td>47.8</td><td>27.2</td><td>3.1</td><td>5.6</td><td>3.1</td><td>22.7</td>
                 </tr>
                 <tr style="background-color: #dcebff;">
-                  <td><b>Ours (vc33)</b></td>
+                  <td><b>Ours, vc33</b></td>
                   <td><b>60.7</b></td><td>41.7</td><td>20.0</td><td><b>21.4</b></td><td><b>11.1</b></td><td>4.5</td><td>26.6</td>
                 </tr>
                 <tr style="background-color: #dcebff;">
-                  <td><b>Ours (as66)</b></td>
+                  <td><b>Ours, as66</b></td>
                   <td>50.9</td><td><b>55.8</b></td><td>26.4</td><td>19.6</td><td>9.3</td><td><b>5.4</b></td><td>27.7</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <p style="margin-top: 15px; text-align: center; font-size: 0.9em; color: #666;">
-            ALFWorld task success rates (%). Models trained on ARC-AGI-3 games substantially outperform the baseline across task types.
+            ALFWorld task success rates in percent. Models trained on ARC-AGI-3 games substantially outperform the baseline across task types.
           </p>
         </div>
 
         <div class="content has-text-justified" style="margin-top: 20px;">
-          <h3 class="title is-4">Transfer Insights</h3>
           <ul>
-            <li><b>Substantial gains:</b> All four game-trained models outperform baseline, with improvements of +7.9 to +13.7 percentage points</li>
-            <li><b>Complementary skills:</b> Different games teach different capabilities &mdash; ft09 excels at Clean (34.4%), vc33 at Heat (21.4%), as66 at Look (55.8%)</li>
-            <li><b>Not memorization:</b> Skills transfer to an entirely different domain, confirming that the model learns generalizable interactive reasoning strategies</li>
+            <li><b>Substantial gains.</b> All four game-trained models outperform the baseline, with improvements ranging from +7.9 to +13.7 percentage points. The overall success rate improves from 14.8% to up to 28.5%, nearly doubling baseline performance.</li>
+            <li><b>Complementary skills.</b> Different games teach different capabilities. The ft09-trained model excels at Clean tasks with 34.4%, the vc33-trained model is strongest on Heat at 21.4%, and the as66-trained model leads on Look at 55.8%.</li>
+            <li><b>Generalizable reasoning.</b> Skills transfer to an entirely different domain, confirming that the model learns reusable interactive reasoning strategies rather than game-specific memorization.</li>
           </ul>
         </div>
       </div>
@@ -509,7 +470,7 @@
 </section>
 
 
-<!-- ===== Acknowledgment ===== -->
+<!-- ===== Citation ===== -->
 <section class="section">
   <div class="container is-max-desktop">
     <div class="columns is-centered">
