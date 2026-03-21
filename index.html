@@ -100,7 +100,7 @@
         </div>
       </div>
       <h2 class="subtitle has-text-centered" style="margin-top: 20px;">
-        We combine <b>online RLVR</b> and <b>level-synchronized parallel sampling</b> to enable LLM agents to efficiently learn novel interactive game mechanics in ARC-AGI-3, reducing actions by up to <b>4&times;</b> and transferring learned skills to new domains.
+        We combine <b>online RLVR</b> and <b>level-synchronized parallel sampling</b> to enable LLM agents to efficiently learn novel interactive game mechanics in ARC-AGI-3, requiring up to <b>4&times;</b> fewer actions and transferring learned skills to new domains.
       </h2>
     </div>
   </div>
@@ -186,14 +186,14 @@
 
         <div class="content has-text-justified">
           <p>
-            Frontier models fail dramatically on ARC-AGI-3, exhausting large action budgets with almost no progress, while humans solve the same games with ease. We attribute this gap to two primary sources of difficulty:
+            Frontier models fail to make meaningful progress on ARC-AGI-3, while humans solve the same games with ease. We identify two primary sources of difficulty.
           </p>
           <ul>
-            <li><b>Fundamentally novel mechanics.</b> Each ARC-AGI-3 game is built on distinct mechanics designed to be fundamentally different from one another, and no instructions or goals are provided to the agent. The games rely only on core knowledge priors rather than specialized domain expertise, requiring the agent to adapt to unfamiliar environments through exploration alone. These mechanics lie outside pretrained knowledge, so models cannot rely on memorized patterns.</li>
-            <li><b>Extremely sparse learning signals.</b> The only feedback ARC-AGI-3 provides is level completion itself, and most action sequences do not achieve it. Most individual actions either produce no useful feedback or trigger immediate failure such as a level reset. Since each level typically requires tens of sequential correct actions, successful trajectories are exceedingly rare. This sparsity makes it very difficult to leverage feedback for learning, because the model almost never receives a positive signal to improve from.</li>
+            <li><b>Fundamentally novel mechanics.</b> Each ARC-AGI-3 game is built on distinct mechanics, and no instructions or goals are provided to the agent. The games rely only on core knowledge priors, requiring the agent to adapt to unfamiliar environments through exploration alone.</li>
+            <li><b>Extremely sparse learning signals.</b> The only feedback ARC-AGI-3 provides is level completion itself, and most action sequences do not achieve it. Since each level typically requires tens of sequential correct actions, successful trajectories are exceedingly rare.</li>
           </ul>
           <p>
-            Extreme novelty and sparse rewards combine to make ARC-AGI-3 exceptionally hard, exposing core difficulties in interactive reasoning over long-horizon tasks.
+            Novel mechanics and sparse rewards together make ARC-AGI-3 exceptionally hard, exposing core difficulties in interactive reasoning over long-horizon tasks.
           </p>
         </div>
       </div>
@@ -211,7 +211,7 @@
 
         <div class="content has-text-justified" style="margin-bottom: 20px;">
           <p>
-            We propose two complementary techniques. Multi-turn RLVR adapts the model online by fine-tuning on level-completing trajectories, addressing the challenge of novel game mechanics. For sparse rewards, completing a level requires many sequential correct actions, so any single agent rarely succeeds. Running many agents in parallel dramatically increases the chance that at least one completes the level, and we share that progress across all agents: whenever any agent finishes a level, every other agent synchronizes to that state. This draws on the principle of pass@k, where multiple independent attempts yield a much higher success rate than any single try, extended from single-step generation to multi-step interactive tasks.
+            We propose two complementary techniques. Multi-turn RLVR adapts the model online by fine-tuning on level-completing trajectories, building game-specific strategies through experience. For sparse rewards, completing a level requires many sequential correct actions, so any single agent rarely succeeds. Running many agents in parallel dramatically increases the chance that at least one completes the level, and we share that progress across all agents. Whenever any agent finishes a level, all other agents synchronize to that agent's progress. This draws on the principle of pass@k, where multiple independent attempts yield a much higher success rate than any single try.
           </p>
         </div>
 
@@ -222,33 +222,30 @@
         <h3 class="title is-4" style="margin-top: 30px;">Level-Synchronized Parallel Sampling</h3>
         <div class="content has-text-justified">
           <p>
-            Completing a level requires many sequential correct actions, so any single agent rarely succeeds. Running many agents in parallel dramatically increases the chance that at least one completes the level. This draws on the principle of pass@k: just as generating k independent code samples increases the probability that at least one is correct, deploying k agents in parallel increases the probability that at least one discovers a level-completing trajectory.
+            Completing a level requires many sequential correct actions, so any single agent rarely succeeds. Deploying multiple independent agents increases the probability that at least one succeeds, drawing on the pass@k principle that multiple independent attempts yield higher success rates. The key insight is to synchronize at the granularity of each level rather than the entire game.
           </p>
           <p>
-            We instantiate k=128 parallel agent instances, each operating in its own environment initialized at the first level. Each agent independently attempts to complete the current level through its own sequence of actions. When any agent completes the current level, all other agents discard their partial progress and advance to the level-completing state. From this synchronized state, all k agents resume independent exploration on the next level. This process repeats until all levels are completed or exploration terminates.
-          </p>
-          <p>
-            The k agents collectively need to find only one solution per level instead of each agent independently solving all levels from scratch. Progress is shared rather than lost.
+            We instantiate k=128 parallel agent instances, each operating in its own environment initialized at the first level. Each agent independently attempts to complete the current level through its own sequence of actions. When any agent completes the current level, all other agents synchronize to that agent's state and advance together to the next level, where all k agents resume independent exploration. This process repeats until all levels are completed or the step budget is exhausted. The k agents collectively need to find only one solution per level instead of each agent independently solving every level from scratch.
           </p>
         </div>
 
         <h3 class="title is-4">Online Multi-Turn RLVR with Trajectory Chunking</h3>
         <div class="content has-text-justified">
           <p>
-            We apply multi-turn Reinforcement Learning with Verifiable Rewards (RLVR) to improve action selection. The model adapts its policy by learning from its own interactions with the game. Unlike offline RL pipelines that train on a fixed dataset before deployment, our online approach interleaves policy updates with environment interaction.
+            We apply multi-turn Reinforcement Learning with Verifiable Rewards (RLVR) to improve action selection. Training is conducted in an online setting, where the model interleaves policy updates with environment interaction for each game.
           </p>
           <p>
             Many levels in ARC-AGI-3 require dozens of attempts to complete, with individual episodes spanning 100 or more steps. Running until level completion in a single training step is problematic. The agent may execute a long sequence of actions without receiving any positive feedback, and even when the level is eventually completed, attributing a single reward across an excessively long action sequence makes credit assignment difficult.
           </p>
           <p>
-            To address this, we introduce trajectory chunking. Rather than running until level completion before assigning a reward, we divide each trajectory into segments of at most C=5 actions and evaluate whether the level was completed after each segment. Each segment receives a binary reward: +1.0 if the level was completed, and 0.0 otherwise. This bounds the length of each training trajectory, ensuring that when a positive reward is obtained, it can be meaningfully attributed to the actions within that segment. We then update the policy using GRPO with KL-regularized updates to prevent catastrophic forgetting while adapting to new mechanics.
+            To address this, we introduce trajectory chunking. Rather than running until level completion before assigning a reward, we divide each trajectory into segments of at most C=5 actions and evaluate whether the level was completed after each segment. Each segment receives a binary reward (+1.0 if the level was completed, 0.0 otherwise). This bounds the length of each training trajectory, ensuring that when a positive reward is obtained, it can be meaningfully attributed to the actions within that segment. We then update the policy using GRPO with KL-regularized updates to prevent catastrophic forgetting while adapting to new mechanics.
           </p>
         </div>
 
         <h3 class="title is-4">How They Work Together</h3>
         <div class="content has-text-justified">
           <p>
-            At each round, k parallel agents interact with the environment in chunks of C actions, with level synchronization sharing progress whenever any agent completes a level. The resulting trajectory segments, each annotated with a completion reward, are used to update the policy via RLVR. The improved policy is then deployed for the next round of parallel sampling, improving the agent's action selection over successive rounds.
+            The two components form an iterative loop between exploration and learning. Multiple agents explore the environment in parallel, and whenever any agent completes a level, that progress is shared with all others. The successful trajectories are then used to update the policy, which produces a stronger set of agents for the next round of exploration. Over successive rounds, the agents become increasingly effective at discovering level-completing strategies.
           </p>
         </div>
       </div>
@@ -302,7 +299,7 @@
         <div class="content has-text-justified" style="margin-top: 30px;">
           <h3 class="title is-4">Key Findings</h3>
           <ul>
-            <li><b>Both components contribute meaningfully.</b> Parallel sampling alone enables levels the base model cannot reach. Adding RLVR further reduces actions by approximately 4&times; on vc33, from 79 to 19 steps.</li>
+            <li><b>Both components contribute meaningfully.</b> Parallel sampling alone enables levels the base model cannot reach. Adding RLVR further reduces actions on vc33 from 79 to 19, approximately 4&times; fewer.</li>
             <li><b>RLVR unlocks new levels.</b> On ft09, RLVR enables Level 3 completion at 78 actions where parallel sampling alone fails beyond 150.</li>
             <li><b>Near-optimal on vc33.</b> Our method achieves 19 cumulative actions compared to the optimal 22, using only a 7B parameter model.</li>
             <li><b>Consistent cross-game improvements.</b> The method improves action efficiency across all four games with distinct mechanics and action spaces.</li>
@@ -483,7 +480,7 @@
         <h2 class="title is-3">Acknowledgments</h2>
         <div class="content has-text-justified">
           <p>
-            We would like to extend special thanks to <a href="https://gregkamradt.com/">Greg Kamradt</a> and the <a href="https://arcprize.org/">ARC Prize Foundation</a> for their help. We also gratefully acknowledge <a href="https://lambda.ai/">Lambda Inc.</a> for providing a research grant that supported the computational resources used in this work.
+            We would like to thank <a href="https://gregkamradt.com/">Greg Kamradt</a> and the <a href="https://arcprize.org/">ARC Prize Foundation</a> for their help. We also thank <a href="https://lambda.ai/">Lambda Inc.</a> for providing a research grant that supported the computational resources used in this work.
           </p>
         </div>
       </div>
